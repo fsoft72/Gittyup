@@ -215,9 +215,13 @@ else()
   if(UNIX)
     install(
       FILES ${CMAKE_SOURCE_DIR}/rsrc/linux/com.github.Murmele.Gittyup.desktop
-      DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+      DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
+      COMPONENT ${GITTYUP_NAME})
     if(${GENERATE_APPDATA})
-      install(FILES ${APPDATA} DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
+      install(
+        FILES ${APPDATA}
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo
+        COMPONENT ${GITTYUP_NAME})
     endif()
   endif()
 

@@ -254,7 +254,9 @@ elseif(GITTYUP_PACK_WIN64)
       "ExecWait '\\\"$INSTDIR\\\\vcredist_x64.exe\\\" /q /norestart'")
   set(PLATFORM "-win64")
 else()
-  set(CPACK_GENERATOR TGZ)
+  if(NOT CPACK_GENERATOR)
+    set(CPACK_GENERATOR TGZ)
+  endif()
 endif()
 
 if(DEV_BUILD)
@@ -264,6 +266,17 @@ else()
 endif()
 set(PACKAGE_FILE_NAME
     "${GITTYUP_NAME}${PLATFORM}-${GITTYUP_VERSION}${BUILD_TAG}")
+
+# Debian package configuration
+set(CPACK_PACKAGE_NAME "gittyup")
+set(CPACK_DEBIAN_PACKAGE_NAME "gittyup")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Gittyup Contributors <https://github.com/Murmele/Gittyup>")
+set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/Murmele/Gittyup")
+set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Graphical Git client designed to understand and manage source code")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
 
 set(CPACK_MONOLITHIC_INSTALL true)
 set(CPACK_INSTALL_CMAKE_PROJECTS ${CMAKE_BINARY_DIR} ${GITTYUP_NAME}

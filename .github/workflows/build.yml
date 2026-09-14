@@ -130,8 +130,8 @@ jobs:
             qt_arch: linux_gcc_64
             openssl_arch: linux-x86_64
             ld_library_arch: linux-x86-64
-            cmake_flags: "-DGENERATE_APPDATA=ON -DCMAKE_INSTALL_PREFIX=/usr -DENABLE_UPDATE_OVER_GUI=OFF -DUSE_SSH=ON"
-            pack: 0
+            cmake_flags: "-DGENERATE_APPDATA=ON -DCMAKE_INSTALL_PREFIX=/usr -DENABLE_UPDATE_OVER_GUI=OFF -DUSE_SSH=ON -DCPACK_GENERATOR=DEB"
+            pack: 1
             cmake_env: {}
 
           - name: macos
@@ -270,7 +270,9 @@ jobs:
         if: matrix.env.pack
         uses: actions/upload-artifact@v6
         with:
-          path: build/release/pack/Gittyup-*
+          path: |
+            build/release/pack/Gittyup-*
+            build/release/pack/*.deb
           name: Gittyup ${{ matrix.env.name }}
 
       # Publish only once!
@@ -380,9 +382,10 @@ jobs:
           shopt -s nullglob
           flatpaks=(artifacts/GittyupFlatpak/*.flatpak)
           appimages=(artifacts/GittyupAppImage/Gittyup*.AppImage)
+          deb_files=("artifacts/Gittyup linux"/*.deb)
           windows_files=("artifacts/Gittyup win64"/Gittyup*.exe)
           macos_files=("artifacts/Gittyup macos"/Gittyup*.dmg)
-          files=("${flatpaks[@]}" "${appimages[@]}" "${windows_files[@]}")
+          files=("${flatpaks[@]}" "${appimages[@]}" "${deb_files[@]}" "${windows_files[@]}" "${macos_files[@]}")
           if [ ${#files[@]} -eq 0 ]; then
             echo "No assets to upload."
             exit 1
@@ -408,9 +411,10 @@ jobs:
           TAG="${{ github.ref_name }}"
           flatpaks=(artifacts/GittyupFlatpak/*.flatpak)
           appimages=(artifacts/GittyupAppImage/Gittyup*.AppImage)
+          deb_files=("artifacts/Gittyup linux"/*.deb)
           windows_files=("artifacts/Gittyup win64"/Gittyup*.exe)
           macos_files=("artifacts/Gittyup macos"/Gittyup*.dmg)
-          files=("${flatpaks[@]}" "${appimages[@]}" "${windows_files[@]}")
+          files=("${flatpaks[@]}" "${appimages[@]}" "${deb_files[@]}" "${windows_files[@]}" "${macos_files[@]}")
           if [ ${#files[@]} -eq 0 ]; then
             echo "No assets to upload."
             exit 1

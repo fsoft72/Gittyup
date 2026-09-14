@@ -254,6 +254,34 @@ jobs:
           cd build/release
           ninja package
 
+      - name: Validate Debian package
+        if: matrix.env.ninja_platform == 'linux'
+        run: |
+          set -e
+          DEB_FILE=$(ls ./build/release/pack/*.deb)
+          echo "Found Debian package: $DEB_FILE"
+          
+          # Inspect control metadata and calculated shlib dependencies
+          dpkg -I "$DEB_FILE"
+          
+          # Verify essential files are in the archive
+          dpkg -c "$DEB_FILE" | grep "/usr/bin/gittyup$"
+          dpkg -c "$DEB_FILE" | grep "/usr/bin/gittyup-indexer$"
+          dpkg -c "$DEB_FILE" | grep "/usr/bin/gittyup-relauncher$"
+          dpkg -c "$DEB_FILE" | grep "/usr/bin/credential-helpers/git-credential-libsecret$"
+          dpkg -c "$DEB_FILE" | grep "/usr/share/applications/com.github.Murmele.Gittyup.desktop$"
+          dpkg -c "$DEB_FILE" | grep "/usr/share/icons/hicolor/scalable/apps/gittyup.svg$"
+          dpkg -c "$DEB_FILE" | grep "/usr/share/Gittyup/emoji.json$"
+          
+          # Test installation and resolution of dependencies
+          sudo apt-get update
+          sudo apt-get install -y "$DEB_FILE"
+          
+          # Verify executable runs
+          which gittyup
+          xvfb-run -a gittyup --version
+          which gittyup-indexer
+
       # Command copied from flathub build process
       - name: Validate appdata file
         if: matrix.env.ninja_platform == 'linux'
